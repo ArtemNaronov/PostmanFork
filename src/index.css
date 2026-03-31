@@ -1,0 +1,129 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Consolas, monospace;
+}
+
+/* Дневная тема — светлое стекло */
+:root {
+  color-scheme: light;
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-bg-strong: rgba(255, 255, 255, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --glass-shadow: rgba(15, 23, 42, 0.08);
+  --text: #0c1222;
+  --text-muted: #5c6578;
+  --accent: #0071e3;
+  --accent-glow: rgba(0, 113, 227, 0.35);
+  --danger: #d4183d;
+  --ok: #0d8f4d;
+  --mesh-1: #c7e0ff;
+  --mesh-2: #e8e4ff;
+  --mesh-3: #d4f4f0;
+}
+
+/* Ночная тема */
+html.dark {
+  color-scheme: dark;
+  --glass-bg: rgba(28, 32, 40, 0.55);
+  --glass-bg-strong: rgba(38, 44, 56, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.06);
+  --glass-shadow: rgba(0, 0, 0, 0.45);
+  --text: #f2f4f8;
+  --text-muted: #9aa3b5;
+  --accent: #0a84ff;
+  --accent-glow: rgba(10, 132, 255, 0.4);
+  --danger: #ff6b6b;
+  --ok: #34c759;
+  --mesh-1: #0a1628;
+  --mesh-2: #12182a;
+  --mesh-3: #0d2233;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--text);
+  min-height: 100vh;
+  background-color: #0a0c10;
+  background-image:
+    radial-gradient(120% 80% at 80% 10%, var(--mesh-1), transparent 55%),
+    radial-gradient(90% 70% at 10% 90%, var(--mesh-2), transparent 50%),
+    radial-gradient(70% 50% at 50% 50%, var(--mesh-3), transparent 60%),
+    linear-gradient(165deg, #e8eef8 0%, #dce8f5 40%, #e5ecf8 100%);
+  background-attachment: fixed;
+}
+
+html.dark body {
+  background-image:
+    radial-gradient(100% 80% at 70% 0%, rgba(30, 58, 95, 0.5), transparent 55%),
+    radial-gradient(80% 60% at 0% 100%, rgba(45, 30, 75, 0.35), transparent 50%),
+    radial-gradient(60% 40% at 50% 40%, rgba(15, 40, 55, 0.4), transparent 55%),
+    linear-gradient(180deg, #050608 0%, #0c1018 50%, #080a0e 100%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Шум поверх фона (лёгкая зернистость) */
+.app-noise::before {
+  content: '';
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+html.dark .app-noise::before {
+  opacity: 0.055;
+}
+
+/* Панель в стиле liquid glass */
+.glass {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px) saturate(1.65);
+  -webkit-backdrop-filter: blur(22px) saturate(1.65);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 0 0 1px var(--glass-highlight) inset,
+    0 8px 32px var(--glass-shadow);
+}
+
+.glass-strong {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(28px) saturate(1.8);
+  -webkit-backdrop-filter: blur(28px) saturate(1.8);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: var(--text);
+}
+
+html.dark .glass-input {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 88%, #000) 100%);
+  color: #fff;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 4px 20px var(--accent-glow);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.06);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  filter: none;
+}
