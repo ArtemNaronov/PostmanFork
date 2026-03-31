@@ -30,13 +30,16 @@ git push -u origin main
 
 Если репозиторий на GitHub ещё пустой, команда `git push -u origin main` создаст историю на сервере.
 
-### Публикация через Actions
+### Публикация через Actions (ветка `gh-pages`)
 
-1. На GitHub: **Settings → Pages → Build and deployment**.
-2. В поле **Source** выберите **GitHub Actions** (не «Deploy from a branch»).
-3. После пуша в `main` запускается workflow **Deploy to GitHub Pages**; сайт будет по адресу вида  
+Workflow кладёт сборку в ветку **`gh-pages`** — без режима «GitHub Actions» в настройках Pages (он как раз и давал 404 у `deploy-pages`).
+
+1. **Settings → Pages → Build and deployment**.
+2. **Source**: **Deploy from a branch** (не «GitHub Actions»).
+3. **Branch**: **`gh-pages`**, папка **`/ (root)`**. Сохраните.
+4. После пуша в **`main`** (или ручного запуска workflow) подождите зелёный job; сайт:  
    `https://<user>.github.io/<имя-репозитория>/`.
 
-Сборка подставляет корень приложения автоматически из переменной `GITHUB_REPOSITORY` (см. `vite.config.ts`).
+Корень приложения для Vite задаётся через `GITHUB_REPOSITORY` при сборке (см. `vite.config.ts`).
 
-Ручной запуск: вкладка **Actions → Deploy to GitHub Pages → Run workflow**.
+Ручной запуск: **Actions → Deploy to GitHub Pages → Run workflow**.
