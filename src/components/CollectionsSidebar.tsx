@@ -69,7 +69,7 @@ export function CollectionsSidebar({
   }, [selectedHeaderPresetId, headerPresets])
 
   return (
-    <aside className="glass glass-strong relative z-10 flex h-full min-h-0 w-80 shrink-0 flex-col rounded-none border-r border-[var(--glass-border)] md:rounded-l-3xl">
+    <aside className="glass glass-strong relative z-10 flex h-full min-h-0 w-80 shrink-0 flex-col rounded-none border-r border-[var(--glass-border)] md:rounded-3xl">
       <div className="shrink-0 border-b border-[var(--glass-border)] p-4">
         <div className="mb-3 flex items-center justify-between gap-2">
           <h2 className="text-sm font-semibold tracking-tight text-[var(--text)]">Коллекции</h2>

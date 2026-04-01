@@ -57,7 +57,7 @@ function validateBeforeSend(draft: DraftRequest): string | null {
 }
 
 export default function App() {
-  const { data, error, loading, refresh } = useAppStorage()
+  const { data, error, loading, refresh, mutateData } = useAppStorage()
   const { theme, toggle, ready: themeReady } = useTheme()
   const [draft, setDraft] = useState<DraftRequest>(() => storage.getDefaultDraft())
   const [draftHydrated, setDraftHydrated] = useState(false)
@@ -254,21 +254,22 @@ export default function App() {
 
   const debouncedSaveHeaderPreset = useDebouncedCallback(
     async (payload: { id: string; headers: HeaderEntry[] }) => {
-      const presets = await storage.loadHeaderPresets()
-      const p = presets.find((x) => x.id === payload.id)
-      if (!p) return
-      p.headers = payload.headers
-      await storage.saveHeaderPreset(p)
-      await refresh()
+      const current = data?.headerPresets.find((x) => x.id === payload.id)
+      if (!current) return
+      await storage.saveHeaderPreset({ ...current, headers: payload.headers })
     },
     450,
   )
 
   const handleUpdateHeaderPresetHeaders = useCallback(
     (id: string, headers: HeaderEntry[]) => {
+      mutateData((prev) => ({
+        ...prev,
+        headerPresets: prev.headerPresets.map((p) => (p.id === id ? { ...p, headers } : p)),
+      }))
       debouncedSaveHeaderPreset({ id, headers })
     },
-    [debouncedSaveHeaderPreset],
+    [debouncedSaveHeaderPreset, mutateData],
   )
 
   const handleAddHeaderPreset = useCallback(
@@ -356,7 +357,7 @@ export default function App() {
           onRemoveHeaderPreset={(id) => void handleRemoveHeaderPreset(id)}
         />
         <main className="relative z-10 min-w-0 flex-1 overflow-y-auto rounded-3xl">
-          <div className="mx-auto max-w-5xl space-y-6 px-2 pb-8 pt-2 md:px-4">
+          <div className="mx-auto max-w-5xl space-y-6 px-2 pb-8 md:px-4">
             <RequestBuilder
               draft={draft}
               onChange={updateDraft}

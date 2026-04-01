@@ -8,17 +8,22 @@ type Props = {
   loading: boolean
 }
 
-function isJsonBody(text: string): boolean {
-  const t = text.trim()
-  if (!t) return false
-  return tryParseJson(t).ok
-}
+// Guard against expensive recursive tree rendering for very large JSON payloads.
+const MAX_JSON_TREE_RENDER_CHARS = 300_000
 
 export function ResponseViewer({ result, loading }: Props) {
   const [rawText, setRawText] = useState(false)
 
   const bodyText = result?.bodyFormatted ?? result?.bodyText ?? ''
-  const showTree = useMemo(() => isJsonBody(bodyText), [bodyText])
+  const parsedJson = useMemo(() => {
+    const t = bodyText.trim()
+    if (!t) return { ok: false as const, value: null as unknown }
+    const parsed = tryParseJson(t)
+    if (!parsed.ok) return { ok: false as const, value: null as unknown }
+    return { ok: true as const, value: parsed.value }
+  }, [bodyText])
+  const showTree = parsedJson.ok
+  const allowTreeRender = showTree && bodyText.length <= MAX_JSON_TREE_RENDER_CHARS
 
   useEffect(() => {
     setRawText(false)
@@ -80,7 +85,7 @@ export function ResponseViewer({ result, loading }: Props) {
         )}
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm font-medium text-[var(--text)]">Тело ответа</span>
-          {showTree && (
+          {showTree && allowTreeRender && (
             <button
               type="button"
               onClick={() => setRawText((v) => !v)}
@@ -90,8 +95,13 @@ export function ResponseViewer({ result, loading }: Props) {
             </button>
           )}
         </div>
-        {showTree && !rawText ? (
-          <JsonTreeView json={bodyText} />
+        {showTree && !allowTreeRender && (
+          <p className="mb-2 text-xs text-[var(--text-muted)]">
+            JSON большой, поэтому показан как текст для плавной работы интерфейса.
+          </p>
+        )}
+        {showTree && allowTreeRender && !rawText ? (
+          <JsonTreeView json={parsedJson.value} />
         ) : (
           <pre className="glass max-h-96 overflow-auto whitespace-pre-wrap rounded-2xl p-4 font-mono text-xs text-[var(--text)]">
             {bodyText}
